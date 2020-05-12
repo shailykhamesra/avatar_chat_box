@@ -2,16 +2,30 @@ require('dotenv').config();
 const {NODE_ENV, PORT, HOST}=process.env
 const express = require('express');
 const app = express();
+const MongoClient = require('mongodb').MongoClient;
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-app.use(express.static("public"));
+app.use(express.static(__dirname + "/public"));
 
-var count=0, clicks;
+var userCount=0, count=0, db, username, clicks;
 
 initialize();
 
 function initialize(){
+  socketConnection();
   initDatabaseAndStartServer();
+}
+
+function socketConnection(){
+  io.sockets.on('connection', function(socket) {
+    username = Math.random().toString(36).substring(7);
+    socket.username = username;
+    userCount++;
+    
+    socket.emit('newUserConnect',{ username: socket.username});
+    io.sockets.emit('userCount',{ userCount: userCount, username: socket.username});
+    socket.emit('clickCount', count);  
+  });
 }
 
 

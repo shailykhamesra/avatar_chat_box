@@ -4,9 +4,31 @@
     <meta charset="utf-8">
     <title>Button Click</title>
   </head>
-  <body align='center'>
+<body align='center'>
+    <div id='currentUser'></div>
+    <div id='getCount'></div>
+    <div id='getName'></div>
     <div id="clicks">Loading click data.</div>
     </br>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+    <script>
+      var enabled = true;
+      var socket = io.connect();
+
+      socket.on('userCount', function(data) {
+        $('#getCount').html('Currently active user count: '+ data.userCount);
+      })
+      
+      socket.on('newUserConnect',function(data) {
+        $('#currentUser').html('<h1> Welcome ' + data.username + ' !</h1>' );
+      });
+
+      socket.on('clickCount',function(data) {
+        $('#clicks').html('Click count: ' + data);
+      });
+    </script>
     <button id="myButton" onClick = "buttonClicked()">Click Me</button>
     </br></br>
   </body>
