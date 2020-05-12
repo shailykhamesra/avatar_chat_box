@@ -7,25 +7,13 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 app.use(express.static(__dirname + "/public"));
 
-var userCount=0, count=0, db, username, clicks;
+var userCount=0, count=0, db, username, clicks, lastUserName;
 
 initialize();
 
 function initialize(){
   socketConnection();
   initDatabaseAndStartServer();
-}
-
-function socketConnection(){
-  io.sockets.on('connection', function(socket) {
-    username = Math.random().toString(36).substring(7);
-    socket.username = username;
-    userCount++;
-    
-    socket.emit('newUserConnect',{ username: socket.username});
-    io.sockets.emit('userCount',{ userCount: userCount, username: socket.username});
-    socket.emit('clickCount', count);  
-  });
 }
 
 
@@ -54,6 +42,33 @@ function initDatabaseAndStartServer(){
   });
 }
 
+function socketConnection(){
+  io.sockets.on('connection', function(socket) {
+    username = Math.random().toString(36).substring(7);
+    socket.username = username;
+    userCount++;
+    emitData();
+    socket.emit('newUserConnect',{ username: socket.username});
+    io.sockets.emit('userCount',{ userCount: userCount, username: socket.username});
+    socket.emit('clickCount', count);
+  
+    if(lock){
+      socket.emit('lockButton');
+    }
+  
+    socket.on('disconnect', function() {
+      userCount--;
+      io.sockets.emit('userCount' ,{ userCount: userCount});
+    });
+
+    socket.on('sendName', function(){
+      lastUserName = socket.username;
+      io.sockets.emit('newName' ,{username: socket.username});
+    });
+  });
+}
+
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
@@ -66,6 +81,7 @@ app.post('/clicked', (req, res) => {
     } else {
       updateLocalCount();
     }
+    emitData();
     res.sendStatus(200);
   });
 });
@@ -74,5 +90,8 @@ function updateLocalCount() {
   count++;
 };
 
-
+function emitData() {
+  io.emit('clickCount', count);
+  io.emit('newName', {username: lastUserName});
+}
 

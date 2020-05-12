@@ -28,6 +28,14 @@
       socket.on('clickCount',function(data) {
         $('#clicks').html('Click count: ' + data);
       });
+
+      socket.on('newName', function(data) {
+        $('#getName').html('Last click made by : '+ data.username);
+      });
+
+      function buttonClicked() {
+        socket.emit('sendName');
+      }
     </script>
     <button id="myButton" onClick = "buttonClicked()">Click Me</button>
     </br></br>
