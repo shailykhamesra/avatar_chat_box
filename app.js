@@ -4,7 +4,6 @@ require('dotenv').config();
 const {NODE_ENV, PORT, HOST}=process.env
 const express = require('express');
 const app = express();
-const mongodb = require('mongodb');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 app.use(express.static("public"));
