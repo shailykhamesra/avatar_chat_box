@@ -25,7 +25,7 @@ async function initialize(){
   collectionName = process.env.COLLECTION_NAME;
 
   //return database object
-  db = await mongo.initDatabaseAndStartServer(mongoUrl, dbName, collectionName);
+  db = await mongo.createDatabaseConnection(mongoUrl, dbName, collectionName);
   
   //initialize server to listen on port
   server.listen(process.env.PORT, () => {

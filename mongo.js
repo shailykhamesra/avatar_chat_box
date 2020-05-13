@@ -1,6 +1,6 @@
 const mongodb = require('mongodb');
 
-function initDatabaseAndStartServer(url, db, collectionName){
+function createDatabaseConnection(url, db, collectionName){
   var dbName = db, collectionName = collectionName;
   return new Promise(resolve => {
     const client = new mongodb.MongoClient(url,{useUnifiedTopology: true});
@@ -15,4 +15,4 @@ function initDatabaseAndStartServer(url, db, collectionName){
   });
 }
 
-module.exports.initDatabaseAndStartServer = initDatabaseAndStartServer;
+module.exports.createDatabaseConnection = createDatabaseConnection;
