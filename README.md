@@ -1,6 +1,6 @@
 # button_clicks
 
-* Running the application for development enviorment --  npm run dev
+* Running the application for development enviornment --  npm run dev
 
 Button clicks include socket programming which helps in updating real time information on the system .
 1. It stores the user count i.e active users on the system and a click button which saves the total clicks made by all the users and which user made the last click. It updates all information over the broadcasting channel so every user get real time update about it. 
