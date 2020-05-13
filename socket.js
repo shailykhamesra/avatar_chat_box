@@ -5,7 +5,7 @@ var app = require('./app');
 // lastUser to keep track of last clicked was made by which user
 var userCount=0, count=0, lock=false,  username, clicks, lockHolder, lastUserName;
 
-function initisocketConnection(io, lastUserName){
+function initSocketConnection(io, lastUserName){
   io.sockets.on('connection', function(socket) {
     //username creation for the socket created on the system
     username = Math.random().toString(36).substring(7);
@@ -62,4 +62,4 @@ function initisocketConnection(io, lastUserName){
   });
 }
 
-module.exports.initisocketConnection = initisocketConnection;
+module.exports.initSocketConnection = initSocketConnection;

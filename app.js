@@ -34,7 +34,7 @@ async function initialize(){
   });
 
   //initialize socket connection
-  lastUserName = socket.initisocketConnection(io, lastUserName);
+  lastUserName = socket.initSocketConnection(io, lastUserName);
   //fetchDbData(db);
 }
 
