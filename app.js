@@ -10,11 +10,10 @@ app.use(express.static("public"));
 var mongo = require('./mongo');
 var socket = require('./socket');
 
-//added variable like userCount to keep count track, count to keep click track
-//db lock to know wether button is locked, lockHolder to fetch lock holder name
-// lastUser to keep track of last clicked was made by which user
-//var userCount=0, count=0, lock=false,  username, db, collectionName, clicks, lockHolder, lastUserName;
+//added variable count to keep track of clicks, db to fetch the database object from mongodb,
+//collectionName to store the collection we will work on and lastUserName for last click details
 var count=0, db, collectionName, lastUserName;
+
 //initialization to enable socket connection and database connection at first and fetching
 //some user as well as click info on new server creation or start
 initialize();

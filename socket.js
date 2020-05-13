@@ -1,4 +1,8 @@
 var app = require('./app');
+
+//added variable like userCount to keep count track, count to keep click track
+//db lock to know wether button is locked, lockHolder to fetch lock holder name
+// lastUser to keep track of last clicked was made by which user
 var userCount=0, count=0, lock=false,  username, clicks, lockHolder, lastUserName;
 
 function initisocketConnection(io, lastUserName){
@@ -9,8 +13,7 @@ function initisocketConnection(io, lastUserName){
     userCount++;
     //socket emit data about the current count of clicks and user who made last click
     app.emitData(lastUserName);
-    //io.emit('clickCount', count);
-    //io.emit('newName', {username: ln});
+    
     //socket emit data to client side about the new user to all existing user and about the current
     //count of clicks to the newly entered user
     socket.emit('newUserConnect',{ username: socket.username});
