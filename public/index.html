@@ -25,6 +25,7 @@
       
       //showing welcome message to the newly created user only
       socket.on('newUserConnect',function(data) {
+        username = data.username;
         $('#currentUser').html('<h1> Welcome ' + data.username + ' !</h1>' );
       });
       
@@ -49,11 +50,6 @@
         document.getElementById("myButton").disabled = false;
         document.getElementById("disableButton").style.visibility = 'visible';
       });
-
-      //emiting a button click message to the server to update the clicking user
-      function buttonClicked() {
-        socket.emit('sendName');
-      }
 
       //toggel lock value between lock and unlock and update html text for button on
       //conditional basis

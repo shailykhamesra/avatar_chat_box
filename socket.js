@@ -3,22 +3,22 @@ var app = require('./app');
 //added variable like userCount to keep count track, count to keep click track
 //db lock to know wether button is locked, lockHolder to fetch lock holder name
 // lastUser to keep track of last clicked was made by which user
-var userCount=0, count=0, lock=false,  username, clicks, lockHolder, lastUserName;
+var userCount=0, count=0, lock=false,  username, clicks, lockHolder, lastClickByUser;
 
-function initSocketConnection(io, lastUserName){
+function initSocketConnection(io){
   io.sockets.on('connection', function(socket) {
     //username creation for the socket created on the system
     username = Math.random().toString(36).substring(7);
     socket.username = username;
     userCount++;
+
     //socket emit data about the current count of clicks and user who made last click
-    app.emitData(lastUserName);
+    app.emitData();
     
     //socket emit data to client side about the new user to all existing user and about the current
     //count of clicks to the newly entered user
     socket.emit('newUserConnect',{ username: socket.username});
     io.sockets.emit('userCount',{ userCount: userCount, username: socket.username});
-    //socket.emit('clickCount', count);
   
     //if the lock is made by some other user than the user user now comming onto the system should have 
     //the click button disabled
@@ -40,12 +40,6 @@ function initSocketConnection(io, lastUserName){
       io.sockets.emit('userCount' ,{ userCount: userCount});
     });
     
-    //socket to emit current user name having last click
-    socket.on('sendName', function(){
-      lastUserName = socket.username;
-      io.sockets.emit('newName' ,{username: socket.username});
-    });
-
     //broadcasting to all other user except the user who perfroms action about the button being disabled
     socket.on('disableButton', function(data){
       lockHolder = socket.username;
@@ -61,5 +55,5 @@ function initSocketConnection(io, lastUserName){
     });
   });
 }
-
+ 
 module.exports.initSocketConnection = initSocketConnection;

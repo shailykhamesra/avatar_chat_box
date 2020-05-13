@@ -4,9 +4,12 @@ require('dotenv').config();
 const {NODE_ENV, PORT, HOST}=process.env
 const express = require('express');
 const app = express();
+var bodyParser = require('body-parser')
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 app.use(express.static("public"));
+app.use(bodyParser.json())
+
 var mongo = require('./mongo');
 var socket = require('./socket');
 
@@ -34,8 +37,7 @@ async function initialize(){
   });
 
   //initialize socket connection
-  lastUserName = socket.initSocketConnection(io, lastUserName);
-  //fetchDbData(db);
+  socket.initSocketConnection(io, lastUserName);
 }
 
 function getClickCount(db){
@@ -53,7 +55,7 @@ function getLastUserClick(db){
   var db = db;
   return new Promise(resolve => {
   db.collection(collectionName).findOne({},{ sort: { datetime: -1 } },(err, data) => {
-    data ? lastUserName = data.username: lastUserName = 'No clicks';
+    data ? lastUserName = data.username : lastUserName = 'No clicks';
     resolve(lastUserName);
   });
 });
@@ -68,13 +70,14 @@ app.get('/', (req, res) => {
 //made the click and at which date and if api call fails then dont update the click made and emit previous
 //data
 app.post('/clicked', (req, res) => {
-  const click = {clickTime: new Date(), username: lastUserName};
+  const click = {clickTime: new Date(), username: req.body.username};
   db.collection(collectionName).insertOne(click, (err, result) => {
     if (err) {
       console.log(err);
     } else {
       updateLocalCount();
     }
+    lastUserName = req.body.username;
     emitData();
     res.sendStatus(200);
   });
@@ -86,9 +89,9 @@ function updateLocalCount() {
 };
 
 //emit real time details using socket about click counts and last click made by which user
-function emitData(lastUserName) {
+function emitData() {
   io.emit('clickCount', count);
-  if(lastUserName) {io.emit('newName', {username: lastUserName});}
+  io.emit('newName', {username: lastUserName});
 }
 
 module.exports.emitData = emitData;

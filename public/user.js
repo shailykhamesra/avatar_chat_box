@@ -2,7 +2,7 @@
 const button = document.getElementById('myButton');
 button.addEventListener('click', function(e) {
 
-  fetch('/clicked', {method: 'POST'})
+  fetch('/clicked', {method: 'POST', body: JSON.stringify({username: username}), headers: { 'Content-Type': 'application/json' }})
     .then(function(response) {
       if(response.ok) {
         return;

@@ -3,15 +3,16 @@ const mongodb = require('mongodb');
 function createDatabaseConnection(url, db, collectionName){
   var dbName = db, collectionName = collectionName;
   return new Promise(resolve => {
-    const client = new mongodb.MongoClient(url,{useUnifiedTopology: true});
-    client.connect((err) => {
-      if (!err) {
-        console.log('connection created');
-      }
+    try{
+      const client = new mongodb.MongoClient(url,{useUnifiedTopology: true});
+      client.connect();
       var db = client.db(dbName);
       db.createCollection(collectionName);
       resolve(db);
-    });
+    }catch(e){
+      console.log(e);
+      process.exit(1);
+    }
   });
 }
 
