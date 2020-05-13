@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Button Click</title>
   </head>
-<body align='center'>
+  <body align='center'>
     <div id='currentUser'></div>
     <div id='getCount'></div>
     <div id='getName'></div>
@@ -14,31 +14,66 @@
     <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 
     <script>
+      //socket data connection with the server side to fetch details to client side
       var enabled = true;
       var socket = io.connect();
 
+      //showing real time active user count on the system
       socket.on('userCount', function(data) {
         $('#getCount').html('Currently active user count: '+ data.userCount);
       })
       
+      //showing welcome message to the newly created user only
       socket.on('newUserConnect',function(data) {
         $('#currentUser').html('<h1> Welcome ' + data.username + ' !</h1>' );
       });
-
+      
+      //showing real time click counts on the system and fetching it in real time with click
       socket.on('clickCount',function(data) {
         $('#clicks').html('Click count: ' + data);
       });
 
+      //showing real time information about the username who clicked the button last
       socket.on('newName', function(data) {
         $('#getName').html('Last click made by : '+ data.username);
       });
 
+      //locking button if any user tries to lock all other users on the system
+      socket.on('lockButton', function(data) {
+        document.getElementById("myButton").disabled = true;
+        document.getElementById("disableButton").style.visibility = 'hidden';
+      });
+      
+      //unlocking button if the user who locked tries to unlock all other users on the system
+      socket.on('unlockButton', function(data) {
+        document.getElementById("myButton").disabled = false;
+        document.getElementById("disableButton").style.visibility = 'visible';
+      });
+
+      //emiting a button click message to the server to update the clicking user
       function buttonClicked() {
         socket.emit('sendName');
+      }
+
+      //toggel lock value between lock and unlock and update html text for button on
+      //conditional basis
+      function lockButton() {
+        var btn = document.getElementById("disableButton");
+        btn.value = 'my value';
+        if(enabled){
+          btn.innerHTML = 'Unlock'
+          socket.emit('disableButton', enabled);
+          enabled = false;
+        }else{
+          btn.innerHTML = 'Lock'
+          socket.emit('enableButton', enabled);
+          enabled = true;
+        }
       }
     </script>
     <button id="myButton" onClick = "buttonClicked()">Click Me</button>
     </br></br>
+    <button id="disableButton" onclick="lockButton()"> Lock </button>
   </body>
   <script src="user.js"></script>
 </html>

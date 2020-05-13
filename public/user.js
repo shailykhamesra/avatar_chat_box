@@ -1,3 +1,4 @@
+//button api listener to send api request from client side and receive response from server side
 const button = document.getElementById('myButton');
 button.addEventListener('click', function(e) {
 
@@ -12,3 +13,4 @@ button.addEventListener('click', function(e) {
       console.log(error);
     });
 });
+
