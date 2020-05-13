@@ -8,7 +8,7 @@ const mongodb = require('mongodb');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 app.use(express.static("public"));
-var mongo = require('./mongo.js');
+
 
 //added variable like userCount to keep count track, count to keep click track
 //db lock to know wether button is locked, lockHolder to fetch lock holder name
@@ -19,22 +19,33 @@ var userCount=0, count=0, lock=false,  username, db, collectionName, clicks, loc
 //some user as well as click info on new server creation or start
 initialize();
 
-async function initialize(){
-  var mongoUrl = process.env.MONGO_URL;
-  var dbName = process.env.DB_NAME;
-  collectionName = process.env.COLLECTION_NAME;
-
-  //return database object
-  db = await mongo.initDatabaseAndStartServer(mongoUrl, dbName, collectionName);
-  
-  //initialize server to listen on port
-  server.listen(process.env.PORT, () => {
-    console.log('Server running ...');
-  });
-
-  //initialize socket connection
+function initialize(){
   initisocketConnection();
-  fetchDbData(db);
+  initDatabaseAndStartServer();
+}
+
+//initializing database connection for already or newly created database name and collection 
+//i.e it creates a new database if the databse is not already present and uses old database if 
+//already presentand connecting to the server to establish a port connection and fetching one time
+//initial data from database
+function initDatabaseAndStartServer(){
+  const url = process.env.MONGO_URL;
+  const client = new mongodb.MongoClient(url,{useUnifiedTopology: true});
+  client.connect((err) => {
+    if (!err) {
+      console.log('connection created');
+    }
+    var dbName = process.env.DB_NAME;
+    collectionName = process.env.COLLECTION_NAME;
+    db = client.db(dbName);
+    db.createCollection(collectionName);
+
+    server.listen(process.env.PORT, () => {
+      console.log('Server running ...');
+    });
+    
+    fetchDbData(db);
+  });
 }
 
 //create socket connection for broadcasting details to client sise from server side and update about 
