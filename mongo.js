@@ -1,4 +1,5 @@
 const mongodb = require('mongodb');
+var db;
 
 function createDatabaseConnection(url, db, collectionName){
   var dbName = db, collectionName = collectionName;
@@ -6,8 +7,12 @@ function createDatabaseConnection(url, db, collectionName){
     try{
       const client = new mongodb.MongoClient(url,{useUnifiedTopology: true});
       client.connect();
-      var db = client.db(dbName);
-      db.createCollection(collectionName);
+      db = client.db(dbName);
+      db.createCollection(collectionName, function(err, collection) {
+          if(err) {
+            console.log("Collection " + collectionName + " already created");
+          }
+        });
       resolve(db);
     }catch(e){
       console.log(e);

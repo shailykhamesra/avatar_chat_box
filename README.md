@@ -1,8 +1,11 @@
-# button_clicks
+# Avatar Chat box
 
 * Running the application for development enviornment --  npm run dev
 
-Button clicks include socket programming which helps in updating real time information on the system .
-1. It stores the user count i.e active users on the system and a click button which saves the total clicks made by all the users and which user made the last click. It updates all information over the broadcasting channel so every user get real time update about it. 
-2. It passes a welcome message which is visible to newly created and use where it maintains the user name as well, each time a user is created all other users become aware of it.
-3. It gives the functionality to the user to lock and unlock button for the remaining user. The lock button locks the click button for all other user except the user who locked it. The user can unlock all users again, all remaining user cant perfrom the click function untill they are unlocked. The user who locked the button if sometimes leaves before unlocking the system than the system gets back to unlock state resolving deadlock condition and also user count is decresed when a user leaves the system.
+Avatar based chat-box include socket programming which helps in updating real time information on the system .
+1. It stores the user count i.e active users on the system and a welcome message to eeach user on the system with the message count and last sent meessage username.
+2. Once a user selects the avatar all other users access to avatar slection is blocked by the primary avatar selector user.
+3. Once the avatar is selected the chat box becomes active and the user can send message and the message becomes reeal time available to all th activee users.
+4. The avatart is available back to all the user wheen the primary avatar holder leaves tab. After that the proceess continues of avatar selection and chat-box.
+5. All previous messages can also be seen once the chat-box becomes available.
+
